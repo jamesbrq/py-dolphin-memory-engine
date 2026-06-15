@@ -79,13 +79,15 @@ bool MacDolphinProcess::obtainEmuRAMInformations()
     }
 
     // if these are true, then it is very likely the correct region, but we cannot guarantee
-    if ((!MEM1Found || (MEM1Found && MEM1Obj == topInfo.obj_id)) && size == Common::GetMEM1Size() &&
+    if ((!MEM1Found || (MEM1Found && MEM1Obj == topInfo.obj_id)) &&
+        Common::IsMEM1RegionSize(static_cast<u32>(size)) &&
         regInfo.share_mode == SM_TRUESHARED &&
         basInfo.max_protection == (VM_PROT_READ | VM_PROT_WRITE))
     {
       if (basInfo.offset == 0x0)
       {
         m_emuRAMAddressStart = regionAddr;
+        Common::SetMEM1RealSizeFromRegion(static_cast<u32>(size));
         MEM1Found = true;
       }
       else if (basInfo.offset == Common::GetMEM1Size() + 0x40000)

@@ -13,6 +13,16 @@ u32 GetMEM1Size();
 u32 GetMEM2Size();
 u32 GetMEM1End();
 u32 GetMEM2End();
+
+// Returns true for a host region size that could be the MEM1 fastmem view:
+// 32 MiB normally, or 64 MiB when Dolphin's "Emulated Memory Size Override"
+// is enabled. Used by the per-OS detectors instead of an exact size match.
+bool IsMEM1RegionSize(u32 size);
+
+// Called by a detector once the MEM1 host region is located. If the region
+// is the 64 MiB override view, widens the recorded MEM1 size/end so that
+// bounds checks and offset math cover the expanded RAM.
+void SetMEM1RealSizeFromRegion(u32 regionSize);
 constexpr u32 MEM1_START = 0x80000000;
 constexpr u32 MEM2_START = 0x90000000;
 constexpr u32 ARAM_SIZE = 0x1000000;

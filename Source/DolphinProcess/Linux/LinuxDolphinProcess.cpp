@@ -73,11 +73,12 @@ bool LinuxDolphinProcess::obtainEmuRAMInformations()
         break;
     }
 
-    if (SecondAddress - firstAddress == Common::GetMEM1Size())
+    if (Common::IsMEM1RegionSize(static_cast<u32>(SecondAddress - firstAddress)))
     {
       if (offset == 0x0)
       {
         m_emuRAMAddressStart = firstAddress;
+        Common::SetMEM1RealSizeFromRegion(static_cast<u32>(SecondAddress - firstAddress));
         MEM1Found = true;
       }
       else if (offset == Common::GetMEM1Size() + 0x40000)

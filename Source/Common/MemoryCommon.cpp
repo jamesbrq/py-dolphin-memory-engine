@@ -53,6 +53,26 @@ void UpdateMemoryValues()
   s_mem2_end = MEM2_START + GetMEM2SizeReal();
 }
 
+bool IsMEM1RegionSize(u32 size)
+{
+  // 24 MiB rounds up to a 32 MiB power-of-two fastmem view; the override can
+  // map MEM1 up to 64 MiB (already a power of two). Accept either.
+  return size == NextPowerOf2(24u * 1024 * 1024) || size == 0x4000000u;
+}
+
+void SetMEM1RealSizeFromRegion(u32 regionSize)
+{
+  // Only the 64 MiB override view differs from the stock 24 MiB layout. When
+  // seen, treat the whole 64 MiB as real so GetMEM1End()/isValidConsoleAddress
+  // and dolphinAddrToOffset() cover addresses above 0x81800000.
+  if (regionSize == 0x4000000u)
+  {
+    s_mem1_size_real = 0x4000000u;
+    s_mem1_size = 0x4000000u;
+    s_mem1_end = MEM1_START + s_mem1_size_real;
+  }
+}
+
 size_t getSizeForType(const MemType type, const size_t length)
 {
   switch (type)
