@@ -111,6 +111,16 @@ bool WindowsDolphinProcess::obtainEmuRAMInformations()
 
     unsigned long long base = 0;
     std::memcpy(&base, &(info.BaseAddress), sizeof(info.BaseAddress));
+
+    u32 discMagic = 0;
+    SIZE_T magicRead = 0;
+    if (!ReadProcessMemory(m_hDolphin, (void*)(base + 0x1C), &discMagic, sizeof(discMagic),
+                           &magicRead) ||
+        magicRead != sizeof(discMagic))
+      continue;
+    if (discMagic != 0x3D9F33C2)
+      continue;
+
     if (info.RegionSize == 0x2000000 && (lowest32 == 0 || base < lowest32))
       lowest32 = base;
     else if (info.RegionSize == 0x4000000 && (lowest64 == 0 || base < lowest64))
